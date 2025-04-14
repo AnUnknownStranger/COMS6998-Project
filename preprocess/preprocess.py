@@ -3,12 +3,19 @@ import os
 from PIL import Image
 import numpy as np
 from transformers import TrOCRProcessor
+import torch
 
 #Load the filename and the labels
 def getData(fn,dir,typefn):
     path = os.path.join(dir,fn)
     image = os.path.join(dir,typefn)
 
+    img_path = "pixels_df.pt"
+    label_path = "labels.pt"
+
+    if os.path.exists(img_path) and os.path.exists(label_path):
+        return torch.load(img_path), torch.load(label_path)
+    
     df = pd.read_csv(path)
     #Create the actual path of the filename
     df['file'] = df['FILENAME'].apply(lambda x: os.path.join(image, x))
@@ -30,7 +37,7 @@ def getData(fn,dir,typefn):
     df = df[df['pixels'].notnull()].reset_index(drop=True)
     df = df.drop(columns=['IDENTITY','FILENAME','file'])
 
-
+    torch.save(df, img_path)
+    torch.save(labels, label_path)
     return df, labels
-
 
