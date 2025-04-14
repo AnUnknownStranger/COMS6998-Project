@@ -4,7 +4,6 @@ from PIL import Image
 import numpy as np
 from transformers import TrOCRProcessor
 
-
 #Load the filename and the labels
 def getData(fn,dir,typefn):
     path = os.path.join(dir,fn)
@@ -21,8 +20,7 @@ def getData(fn,dir,typefn):
         try:
             with Image.open(filepath) as img:
                 img = img.convert('RGB') 
-                img = img.resize((384, 384)) 
-                return processor(images=img, return_tensors="pt").pixel_values.squeeze(0)
+                return processor(images=img, return_tensors="pt").pixel_values
         except Exception as e:
             print(f"Error loading {filepath}: {e}")
             return None
@@ -34,4 +32,9 @@ def getData(fn,dir,typefn):
     return df, labels
 
 
+base_dir = r"C:\Users\wei10\.cache\kagglehub\datasets\landlord\handwriting-recognition\versions\1"
+csv_filename = "written_name_train_v2.csv"
+image_subdir = "train_v2/train"    
 
+# Call the getData function
+df, labels = getData(csv_filename, base_dir, image_subdir)
