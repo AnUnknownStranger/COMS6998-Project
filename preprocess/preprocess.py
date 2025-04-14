@@ -26,6 +26,8 @@ def getData(fn,dir,typefn):
             return None
     
     df['pixels'] = df['file'].apply(pixel_conversion)
+    #Delete all the null column
+    df = df[df['pixels'].notnull()].reset_index(drop=True)
     df = df.drop(columns=['IDENTITY','FILENAME','file'])
 
 
