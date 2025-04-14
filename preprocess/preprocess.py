@@ -32,9 +32,3 @@ def getData(fn,dir,typefn):
     return df, labels
 
 
-base_dir = r"C:\Users\wei10\.cache\kagglehub\datasets\landlord\handwriting-recognition\versions\1"
-csv_filename = "written_name_train_v2.csv"
-image_subdir = "train_v2/train"    
-
-# Call the getData function
-df, labels = getData(csv_filename, base_dir, image_subdir)
