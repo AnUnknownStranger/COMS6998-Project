@@ -40,7 +40,7 @@ def getData(fn,dir,typefn,processor):
     train_data = []
     for img, label in zip(df['pixels'], labels):
         encoding = processor.tokenizer(str(label),padding="max_length",max_length=128,truncation=True,return_tensors="pt")
-        train_data.append({"pixel_values": image,"labels": encoding.input_ids.squeeze(),"attention_mask": encoding.attention_mask.squeeze()})
+        train_data.append({"pixel_values": img.squeeze(),"labels": encoding.input_ids.squeeze(),"attention_mask": encoding.attention_mask.squeeze()})
 
     torch.save(train_data, img_path)
     return train_data
