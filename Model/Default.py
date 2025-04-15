@@ -38,8 +38,13 @@ if __name__ == "__main__":
         tokenizer=processor.feature_extractor,
         data_collator=default_data_collator,
     )
-
+    start_time = time.time()
     trainer.train()
+    end_time = time.time()
+    time_taken = end_time - start_time
+    print(f"Training completed in {time_taken} seconds")
+
+    trainer.save_model("default_model")
     
 
 
