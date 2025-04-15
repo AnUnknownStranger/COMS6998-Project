@@ -6,22 +6,20 @@ from transformers import TrOCRProcessor
 import torch
 
 #Load the filename and the labels
-def getData(fn,dir,typefn):
+def getData(fn,dir,typefn,processor):
     path = os.path.join(dir,fn)
     image = os.path.join(dir,typefn)
 
-    img_path = "pixels_df.pt"
-    label_path = "labels.pt"
+    img_path = "train_data.pt"
 
-    if os.path.exists(img_path) and os.path.exists(label_path):
-        return torch.load(img_path), torch.load(label_path)
+    if os.path.exists(img_path):
+        return torch.load(img_path)
     
     df = pd.read_csv(path)
     #Create the actual path of the filename
     df['file'] = df['FILENAME'].apply(lambda x: os.path.join(image, x))
 
     labels = df['IDENTITY']
-    processor = TrOCRProcessor.from_pretrained("microsoft/trocr-base-handwritten")
 
     def pixel_conversion(filepath):
         try:
@@ -37,7 +35,12 @@ def getData(fn,dir,typefn):
     df = df[df['pixels'].notnull()].reset_index(drop=True)
     df = df.drop(columns=['IDENTITY','FILENAME','file'])
 
-    torch.save(df, img_path)
-    torch.save(labels, label_path)
-    return df, labels
+    #Create the Train_data
+    train_data = []
+    for img, label in zip(df['pixels'], labels):
+        encoding = processor.tokenizer(label,padding="max_length",max_length=128,truncation=True,return_tensors="pt")
+        train_data.append({"pixel": image,"labels": encoding.input_ids.squeeze(),"attention_mask": encoding.attention_mask.squeeze()})
+
+    torch.save(img_path)
+    return train_data
 
