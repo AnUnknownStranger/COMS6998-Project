@@ -39,7 +39,6 @@ if __name__ == "__main__":
         data_collator=default_data_collator,
     )
 
-    time.time()
     trainer.train()
     
 
