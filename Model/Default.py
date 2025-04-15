@@ -7,12 +7,11 @@ import time
 
 if __name__ == "__main__":
 
-    dir ="/home/wei1070580217/.cache/kagglehub/datasets/landlord/handwriting-recognition/versions/1"
+    dir = "/home/wei1070580217/.cache/kagglehub/datasets/landlord/handwriting-recognition/versions/1"
     csv_filename = "written_name_train_v2.csv"
     type_fn = "train_v2/train" 
     processor = TrOCRProcessor.from_pretrained("microsoft/trocr-base-handwritten",use_fast=True)
-
-
+    print('Load Start')
     #Load the data
     train_data = getData(csv_filename,dir,type_fn,processor)
     print('Load Completed')
@@ -22,7 +21,7 @@ if __name__ == "__main__":
     training_args = Seq2SeqTrainingArguments(
         output_dir="./model",
         per_device_train_batch_size=4,
-        evaluation_strategy="no",
+        eval_steps=500,
         num_train_epochs=5,
         save_steps=500,
         save_total_limit=2,

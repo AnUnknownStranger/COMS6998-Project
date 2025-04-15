@@ -16,6 +16,7 @@ def getData(fn,dir,typefn,processor):
         return torch.load(img_path)
     
     df = pd.read_csv(path)
+    df = df.sample(frac=0.01, random_state=42).reset_index(drop=True)
     #Create the actual path of the filename
     df['file'] = df['FILENAME'].apply(lambda x: os.path.join(image, x))
 
@@ -38,9 +39,9 @@ def getData(fn,dir,typefn,processor):
     #Create the Train_data
     train_data = []
     for img, label in zip(df['pixels'], labels):
-        encoding = processor.tokenizer(label,padding="max_length",max_length=128,truncation=True,return_tensors="pt")
+        encoding = processor.tokenizer(str(label),padding="max_length",max_length=128,truncation=True,return_tensors="pt")
         train_data.append({"pixel": image,"labels": encoding.input_ids.squeeze(),"attention_mask": encoding.attention_mask.squeeze()})
 
-    torch.save(img_path)
+    torch.save(train_data, img_path)
     return train_data
 
