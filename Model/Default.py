@@ -17,6 +17,7 @@ if __name__ == "__main__":
     print('Load Completed')
     model = VisionEncoderDecoderModel.from_pretrained("microsoft/trocr-base-handwritten")
     model.config.decoder_start_token_id = processor.tokenizer.pad_token_id
+    model.config.pad_token_id = processor.tokenizer.pad_token_id
     model.to("cuda" if torch.cuda.is_available() else "cpu")
     
     training_args = Seq2SeqTrainingArguments(
