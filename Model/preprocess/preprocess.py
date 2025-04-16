@@ -16,7 +16,7 @@ def getData(fn,dir,typefn,processor):
         return torch.load(img_path)
     
     df = pd.read_csv(path)
-    #df = df.sample(frac=0.01, random_state=42).reset_index(drop=True)
+    df = df.sample(frac=0.5, random_state=42).reset_index(drop=True)
     #Create the actual path of the filename
     df['file'] = df['FILENAME'].apply(lambda x: os.path.join(image, x))
 
