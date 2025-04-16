@@ -1,6 +1,6 @@
 import torch
 from transformers import VisionEncoderDecoderModel, Seq2SeqTrainer, Seq2SeqTrainingArguments, default_data_collator,TrOCRProcessor
-
+import wandb
 import os
 from preprocess.preprocess import getData
 import time
@@ -32,6 +32,8 @@ if __name__ == "__main__":
         logging_dir="./logs",
         remove_unused_columns=False,
         fp16=torch.cuda.is_available(),
+        report_to="wandb",
+        logging_steps=50
         )
     
     trainer = Seq2SeqTrainer(
