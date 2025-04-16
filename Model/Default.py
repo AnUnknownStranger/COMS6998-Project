@@ -5,9 +5,11 @@ import os
 from preprocess.preprocess import getData
 import time
 
-if __name__ == "__main__":
 
+if __name__ == "__main__":
+    torch.cuda.empty_cache()
     dir = "/home/wei1070580217/.cache/kagglehub/datasets/landlord/handwriting-recognition/versions/1"
+
     csv_filename = "written_name_train_v2.csv"
     type_fn = "train_v2/train" 
     processor = TrOCRProcessor.from_pretrained("microsoft/trocr-base-handwritten",use_fast=True)

@@ -16,7 +16,7 @@ def getData(fn,dir,typefn,processor):
         return torch.load(img_path)
     
     df = pd.read_csv(path)
-    df = df.sample(frac=0.5, random_state=42).reset_index(drop=True)
+    df = df.sample(frac=0.1, random_state=42).reset_index(drop=True)
     #Create the actual path of the filename
     df['file'] = df['FILENAME'].apply(lambda x: os.path.join(image, x))
 
@@ -26,7 +26,8 @@ def getData(fn,dir,typefn,processor):
         try:
             with Image.open(filepath) as img:
                 img = img.convert('RGB') 
-                return processor(images=img, return_tensors="pt").pixel_values
+                img = img.resize((224, 224))
+                return processor(images=img, return_tensors="pt").pixel_values.squeeze(0)
         except Exception as e:
             print(f"Error loading {filepath}: {e}")
             return None
