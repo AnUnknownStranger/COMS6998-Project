@@ -24,7 +24,7 @@ if __name__ == "__main__":
     
     training_args = Seq2SeqTrainingArguments(
         output_dir="./model",
-        per_device_train_batch_size=4,
+        per_device_train_batch_size=2,
         eval_steps=500,
         num_train_epochs=5,
         save_steps=500,
