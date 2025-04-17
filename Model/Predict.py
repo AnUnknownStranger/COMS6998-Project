@@ -44,7 +44,7 @@ if __name__ == "__main__":
             actual_res = processor.tokenizer.decode(batch[j]['labels'], skip_special_tokens=True)
             actual.append(actual_res)
             predictions.append(pred_res)
-            if (j) == 1:
+            if len(predictions)<50:
                 run.log({"sample_id": i,"actual": actual_res,"pred": pred_res})
 
         del pixel_batch, res, batch
