@@ -27,7 +27,7 @@ if __name__ == "__main__":
 
     predictions = []
     actual = []
-    wandb.init(project="Trocr", name="default_model Evaluation")
+    wandb.init(project="Trocr", name="default_model Evaluation",settings=wandb.Settings(_disable_git=True))
 
     bs = 2
     for i in tqdm(range(0,len(test_data),bs)):
