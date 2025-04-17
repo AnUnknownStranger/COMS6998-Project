@@ -35,7 +35,8 @@ if __name__ == "__main__":
         remove_unused_columns=False,
         fp16=torch.cuda.is_available(),
         report_to="wandb",
-        logging_steps=50
+        logging_steps=50,
+        save_safetensors=False
         )
     
     trainer = Seq2SeqTrainer(
