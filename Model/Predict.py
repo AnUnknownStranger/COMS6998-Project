@@ -29,20 +29,26 @@ if __name__ == "__main__":
     actual = []
     wandb.init(project="Trocr", name="default_model Evaluation")
 
-    for i, item in tqdm(enumerate(test_data), total=len(test_data)):
-        pixel_values = item["pixel_values"].to(device)
-        label_ids = item["labels"].to(device)
+    bs = 4
+    for i in tqdm(range(0,len(test_data),bs)):
+        #Make a stack of batch
+        batch = test_data[i:i+bs]
+        pixel_batch = torch.stack([item["pixel_values"] for item in batch]).to(device)
 
         with torch.no_grad():
-            res = model.generate(pixel_values)
+            res = model.generate(pixel_batch)
         
-        pred_res = processor.tokenizer.batch_decode(res, skip_special_tokens=True)[0]
-        actual_res = processor.tokenizer.decode(label_ids[0], skip_special_tokens=True)
 
-        actual.append(actual_res)
-        predictions.append(pred_res)
-
-        wandb.log({"sample_id": i,"actual": actual_res,"pred": pred_res})
+        for j, output in enumerate(res):
+            pred_res = processor.tokenizer.batch_decode(res, skip_special_tokens=True)[0]
+            actual_res = processor.tokenizer.decode(batch[j]['labels'], skip_special_tokens=True)
+            actual.append(actual_res)
+            predictions.append(pred_res)
+            if (j) == 1:
+                wandb.log({"sample_id": i,"actual": actual_res,"pred": pred_res})
+                
+        del pixel_batch, res, batch
+        torch.cuda.empty_cache()
     
     predictions_np = np.array(predictions)
     actual_np = np.array(actual)
