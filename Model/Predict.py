@@ -27,7 +27,7 @@ if __name__ == "__main__":
 
     predictions = []
     actual = []
-    wandb.init(project="Trocr", name="default_model Evaluation",_disable_git=True)
+    run = wandb.init(project="Trocr", name="default_model Evaluation")
 
     bs = 4
     for i in tqdm(range(0,len(test_data),bs)):
@@ -45,7 +45,7 @@ if __name__ == "__main__":
             actual.append(actual_res)
             predictions.append(pred_res)
             if (j) == 1:
-                wandb.log({"sample_id": i,"actual": actual_res,"pred": pred_res})
+                run.log({"sample_id": i,"actual": actual_res,"pred": pred_res})
 
         del pixel_batch, res, batch
         torch.cuda.empty_cache()
@@ -55,7 +55,7 @@ if __name__ == "__main__":
     exact_match = predictions_np == actual_np
     accuracy = np.mean(exact_match)
 
-    wandb.log({"Test Accuracy": accuracy})
+    run.log({"Test Accuracy": accuracy})
     print(f"Accuracy: {accuracy}")
 
-    wandb.finish()
+    run.finish()
