@@ -12,7 +12,7 @@ if __name__ == "__main__":
     dir = "/home/wei1070580217/.cache/kagglehub/datasets/landlord/handwriting-recognition/versions/1"
 
     csv_filename = "written_name_test_v2.csv"
-    type_fn = "test_v2/train" 
+    type_fn = "test_v2/test" 
     processor = TrOCRProcessor.from_pretrained("microsoft/trocr-base-handwritten")
 
     model = VisionEncoderDecoderModel.from_pretrained("default_model")
@@ -27,6 +27,7 @@ if __name__ == "__main__":
 
     predictions = []
     actual = []
+    wandb.init(project="Trocr", name="default_model Evaluation")
 
     for i, item in tqdm(enumerate(test_data), total=len(test_data)):
         pixel_values = item["pixel_values"].to(device)
