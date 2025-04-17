@@ -29,7 +29,7 @@ if __name__ == "__main__":
     actual = []
     wandb.init(project="Trocr", name="default_model Evaluation",settings=wandb.Settings(_disable_git=True))
 
-    bs = 2
+    bs = 4
     for i in tqdm(range(0,len(test_data),bs)):
         #Make a stack of batch
         batch = test_data[i:i+bs]
