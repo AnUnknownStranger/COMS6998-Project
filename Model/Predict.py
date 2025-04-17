@@ -37,10 +37,10 @@ if __name__ == "__main__":
 
         with torch.no_grad():
             res = model.generate(pixel_batch)
-        
+            pred = processor.tokenizer.batch_decode(res, skip_special_tokens=True)
 
         for j, output in enumerate(res):
-            pred_res = processor.tokenizer.batch_decode(res, skip_special_tokens=True)[0]
+            pred_res = pred[j]
             actual_res = processor.tokenizer.decode(batch[j]['labels'], skip_special_tokens=True)
             actual.append(actual_res)
             predictions.append(pred_res)
