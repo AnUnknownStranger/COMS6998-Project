@@ -41,7 +41,9 @@ if __name__ == "__main__":
 
         for j, output in enumerate(res):
             pred_res = pred[j]
-            actual_res = processor.tokenizer.decode(batch[j]['labels'], skip_special_tokens=True)
+            label_ids = batch[j]['labels']
+            label_ids = [l for l in label_ids if l != -100]
+            actual_res = processor.tokenizer.decode(label_ids, skip_special_tokens=True)
             actual.append(actual_res)
             predictions.append(pred_res)
             if len(predictions)<50:
