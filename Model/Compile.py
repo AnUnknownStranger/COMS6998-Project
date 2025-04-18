@@ -53,6 +53,8 @@ if __name__ == "__main__":
     print(f"Training completed in {time_taken} seconds")
 
     trainer.save_model("Compile_model_default")
+    processor = TrOCRProcessor.from_pretrained("Compile_model_default")
+
     
 
 

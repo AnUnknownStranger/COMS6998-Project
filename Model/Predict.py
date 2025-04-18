@@ -30,10 +30,9 @@ if __name__ == "__main__":
     run = wandb.init(project="Trocr", name="default_model Evaluation")
 
     bs = 2
-    for i in tqdm(range(0,len(test_data),bs)):
-        #Make a stack of batch
-        batch = test_data[i:i+bs]
-        pixel_batch = torch.stack([item["pixel_values"] for item in batch]).to(device)
+    for i in tqdm(range(0, len(test_data), bs)):
+        batch = test_data[i:i + bs]
+        pixel_batch = torch.stack([item["pixel_values"].to(torch.float32) for item in batch]).to(device)
 
         with torch.no_grad():
             res = model.generate(pixel_batch)
@@ -44,10 +43,16 @@ if __name__ == "__main__":
             label_ids = batch[j]['labels']
             label_ids = [l for l in label_ids if l != -100]
             actual_res = processor.tokenizer.decode(label_ids, skip_special_tokens=True)
-            actual.append(actual_res)
+
             predictions.append(pred_res)
-            if len(predictions)<50:
-                run.log({"sample_id": i,"actual": actual_res,"pred": pred_res})
+            actual.append(actual_res)
+
+            if len(predictions) < 50:
+                run.log({
+                    "sample_id": i + j,
+                    "actual": actual_res,
+                    "pred": pred_res
+                })
 
         del pixel_batch, res, batch
         torch.cuda.empty_cache()
