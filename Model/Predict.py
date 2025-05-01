@@ -41,6 +41,11 @@ if __name__ == "__main__":
         if type == 'ro':
             processor = TrOCRProcessor.from_pretrained("Compile_model_ro")
             model = VisionEncoderDecoderModel.from_pretrained("Compile_model_ro")
+        if type == 'initial':
+            processor = TrOCRProcessor.from_pretrained("microsoft/trocr-base-handwritten",use_fast=True)
+            model = VisionEncoderDecoderModel.from_pretrained("microsoft/trocr-base-handwritten")
+
+        
 
     device = "cuda" if torch.cuda.is_available() else "cpu"
     model.to(device)
