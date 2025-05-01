@@ -76,12 +76,11 @@ if __name__ == "__main__":
             actual.append(actual_res)
             similarity = calculate_similarity(pred, actual)
             similarities.append(similarity)
-            if len(predictions) < 50:
+            if len(predictions) <= 50:
                 run.log({
-                    "sample_id": i + j,
-                    "actual": actual_res,
-                    "pred": pred_res
-                    "similarity": similarity
+                    "id": i + j,
+                    "pred": pred,
+                    "actual": actual
                 })
 
         del pixel_batch, res, batch
