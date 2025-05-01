@@ -27,7 +27,7 @@ if __name__ == "__main__":
     type_fn = "test_v2/test" 
 
     #Make prediction based on processors
-    if len(sys.agrv) < 2:
+    if len(sys.argv) < 2:
         processor = TrOCRProcessor.from_pretrained("microsoft/trocr-base-handwritten")
         model = VisionEncoderDecoderModel.from_pretrained("default_model")
     else:
