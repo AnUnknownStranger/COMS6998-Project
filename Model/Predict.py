@@ -71,7 +71,7 @@ if __name__ == "__main__":
             label_ids = batch[j]['labels']
             label_ids = [l for l in label_ids if l != -100]
             actual_res = processor.tokenizer.decode(label_ids, skip_special_tokens=True)
-
+            print('pred_res:' + pred_res +'    actual_res:'+actual_res)
             predictions.append(pred_res)
             actual.append(actual_res)
             similarity = calculate_similarity(pred, actual)
