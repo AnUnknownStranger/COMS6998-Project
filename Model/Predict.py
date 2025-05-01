@@ -6,16 +6,42 @@ from preprocess.preprocess import getTest
 import time
 from tqdm import tqdm
 import numpy as np
+import sys 
+from Levenshtein import distance
+
+def calculate_similarity(pred, actual):
+    # Calculate Levenshtein distance
+    lev_distance = distance(pred, actual)
+    # Calculate maximum possible distance (length of longer string)
+    max_len = max(len(pred), len(actual))
+    # Calculate similarity score (1 - normalized distance)
+    similarity = 1 - (lev_distance / max_len) if max_len > 0 else 1.0
+    return similarity
 
 if __name__ == "__main__":
+
     torch.cuda.empty_cache()
     dir = "/home/wei1070580217/.cache/kagglehub/datasets/landlord/handwriting-recognition/versions/1"
-
+    
     csv_filename = "written_name_test_v2.csv"
     type_fn = "test_v2/test" 
-    processor = TrOCRProcessor.from_pretrained("microsoft/trocr-base-handwritten")
 
-    model = VisionEncoderDecoderModel.from_pretrained("default_model")
+    #Make prediction based on processors
+    if len(sys.agrv) < 2:
+        processor = TrOCRProcessor.from_pretrained("microsoft/trocr-base-handwritten")
+        model = VisionEncoderDecoderModel.from_pretrained("default_model")
+    else:
+        type = str(sys.argv[1])
+        if type == 'default':
+            processor = TrOCRProcessor.from_pretrained("Compile_model_default")
+            model = VisionEncoderDecoderModel.from_pretrained("Compile_model_default")
+        if type == 'ma':
+            processor = TrOCRProcessor.from_pretrained("Compile_model_ma")
+            model = VisionEncoderDecoderModel.from_pretrained("Compile_model_ma")
+        if type == 'ro':
+            processor = TrOCRProcessor.from_pretrained("Compile_model_ro")
+            model = VisionEncoderDecoderModel.from_pretrained("Compile_model_ro")
+
     device = "cuda" if torch.cuda.is_available() else "cpu"
     model.to(device)
     model.eval()
@@ -27,6 +53,8 @@ if __name__ == "__main__":
 
     predictions = []
     actual = []
+    similarities = []
+
     run = wandb.init(project="Trocr", name="default_model Evaluation")
 
     bs = 2
@@ -46,23 +74,42 @@ if __name__ == "__main__":
 
             predictions.append(pred_res)
             actual.append(actual_res)
-
+            similarity = calculate_similarity(pred, actual)
+            similarities.append(similarity)
             if len(predictions) < 50:
                 run.log({
                     "sample_id": i + j,
                     "actual": actual_res,
                     "pred": pred_res
+                    "similarity": similarity
                 })
 
         del pixel_batch, res, batch
         torch.cuda.empty_cache()
     
-    predictions_np = np.array(predictions)
-    actual_np = np.array(actual)
-    exact_match = predictions_np == actual_np
+    # Calculate metrics
+    preds_np = np.array(predictions)
+    labels_np = np.array(actual)
+    similarities_np = np.array(similarities)
+    
+    # Exact match accuracy (original metric)
+    exact_match = preds_np == labels_np
     accuracy = np.mean(exact_match)
+    
+    # Average similarity score
+    avg_similarity = np.mean(similarities_np)
+    
+    # Percentage of predictions with similarity > 0.8
+    high_similarity = np.mean(similarities_np > 0.8)
 
-    run.log({"Test Accuracy": accuracy})
-    print(f"Accuracy: {accuracy}")
+    run.log({
+        "Test Accuracy (Exact Match)": accuracy,
+        "Average Similarity": avg_similarity,
+        "High Similarity (>0.8)": high_similarity,
+    })
+    
+    print(f"Exact Match Accuracy: {accuracy:.4f}")
+    print(f"Average Similarity Score: {avg_similarity:.4f}")
+    print(f"Percentage of High Similarity (>0.8): {high_similarity:.4f}")
 
     run.finish()

@@ -4,9 +4,11 @@ import wandb
 import os
 from preprocess.preprocess import getData
 import time
-
+import sys
 
 if __name__ == "__main__":
+    type = str(sys.argv[1])
+
     torch.cuda.empty_cache()
     dir = "/home/wei1070580217/.cache/kagglehub/datasets/landlord/handwriting-recognition/versions/1"
 
@@ -21,8 +23,12 @@ if __name__ == "__main__":
     model.config.decoder_start_token_id = processor.tokenizer.pad_token_id
     model.config.pad_token_id = processor.tokenizer.pad_token_id
     model.to("cuda" if torch.cuda.is_available() else "cpu")
-
-    model = torch.compile(model, backend="inductor")
+    if type == 'default':
+        model = torch.compile(model, backend="inductor")
+    if type == 'ma':
+        model = torch.compile(model, backend="inductor",mode="max-autotune")
+    if type == 'ro':
+        model = torch.compile(model, backend="inductor",mode="reduce-overhead")
 
     training_args = Seq2SeqTrainingArguments(
         output_dir="./model",
@@ -52,9 +58,7 @@ if __name__ == "__main__":
     time_taken = end_time - start_time
     print(f"Training completed in {time_taken} seconds")
 
-    trainer.save_model("Compile_model_default")
-    processor.save_pretrained("Compile_model_default")
-
+    trainer.save_model("Compile_model_"+type)
     
 
 
