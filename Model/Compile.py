@@ -49,7 +49,7 @@ if __name__ == "__main__":
         model=model,
         args=training_args,
         train_dataset=train_data,
-        tokenizer=processor.feature_extractor,
+        tokenizer=processor.tokenizer,
         data_collator=default_data_collator,
     )
     start_time = time.time()
