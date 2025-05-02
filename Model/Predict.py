@@ -25,6 +25,7 @@ if __name__ == "__main__":
     
     csv_filename = "written_name_test_v2.csv"
     type_fn = "test_v2/test" 
+    model_name = "default_model Evaluation"
 
     #Make prediction based on processors
     if len(sys.argv) < 2:
@@ -32,6 +33,7 @@ if __name__ == "__main__":
         model = VisionEncoderDecoderModel.from_pretrained("default_model")
     else:
         type = str(sys.argv[1])
+        model_name = type + 'model Evaluation' 
         if type == 'default':
             processor = TrOCRProcessor.from_pretrained("Compile_model_default")
             model = VisionEncoderDecoderModel.from_pretrained("Compile_model_default")
@@ -59,8 +61,7 @@ if __name__ == "__main__":
     predictions = []
     actual = []
     similarities = []
-
-    run = wandb.init(project="Trocr", name="default_model Evaluation")
+    run = wandb.init(project="Trocr", name=model_name)
 
     bs = 2
     for i in tqdm(range(0, len(test_data), bs)):

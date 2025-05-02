@@ -34,7 +34,7 @@ if __name__ == "__main__":
         output_dir="./model",
         per_device_train_batch_size=4,
         eval_steps=500,
-        num_train_epochs=5,
+        num_train_epochs=10,
         save_steps=500,
         save_total_limit=2,
         logging_dir="./logs",
@@ -59,6 +59,7 @@ if __name__ == "__main__":
     print(f"Training completed in {time_taken} seconds")
 
     trainer.save_model("Compile_model_"+type)
+    processor.save_pretrained("Compile_model_"+type)
     
 
 
