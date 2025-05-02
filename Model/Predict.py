@@ -79,7 +79,7 @@ if __name__ == "__main__":
             print('pred_res:' + pred_res +'    actual_res:'+actual_res)
             predictions.append(pred_res)
             actual.append(actual_res)
-            similarity = calculate_similarity(pred, actual)
+            similarity = calculate_similarity(pred.strip().lower(), actual.lower())
             similarities.append(similarity)
             if len(predictions) <= 50:
                 run.log({
