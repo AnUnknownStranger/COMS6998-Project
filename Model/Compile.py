@@ -58,8 +58,8 @@ if __name__ == "__main__":
     time_taken = end_time - start_time
     print(f"Training completed in {time_taken} seconds")
 
-    trainer.save_model("Compile_model_"+type)
-    processor.save_pretrained("Compile_model_"+type)
+    model.save_pretrained("Compile_model_" + type)
+    processor.save_pretrained("Compile_model_" + type)
     
 
 
