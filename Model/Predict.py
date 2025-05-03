@@ -37,12 +37,15 @@ if __name__ == "__main__":
         if type == 'default':
             processor = TrOCRProcessor.from_pretrained("Compile_model_default")
             model = VisionEncoderDecoderModel.from_pretrained("Compile_model_default")
+            model = torch.compile(model, backend="inductor")
         if type == 'ma':
             processor = TrOCRProcessor.from_pretrained("Compile_model_ma")
             model = VisionEncoderDecoderModel.from_pretrained("Compile_model_ma")
+            model = torch.compile(model, backend="inductor",mode="max-autotune")
         if type == 'ro':
             processor = TrOCRProcessor.from_pretrained("Compile_model_ro")
             model = VisionEncoderDecoderModel.from_pretrained("Compile_model_ro")
+            model = torch.compile(model, backend="inductor",mode="reduce-overhead")
         if type == 'initial':
             processor = TrOCRProcessor.from_pretrained("microsoft/trocr-base-handwritten",use_fast=True)
             model = VisionEncoderDecoderModel.from_pretrained("microsoft/trocr-base-handwritten")

@@ -24,11 +24,11 @@ if __name__ == "__main__":
     model.config.pad_token_id = processor.tokenizer.pad_token_id
     model.to("cuda" if torch.cuda.is_available() else "cpu")
     if type == 'default':
-        model = torch.compile(model, backend="inductor")
+        compiled_model = torch.compile(model, backend="inductor")
     if type == 'ma':
-        model = torch.compile(model, backend="inductor",mode="max-autotune")
+        compiled_model  = torch.compile(model, backend="inductor",mode="max-autotune")
     if type == 'ro':
-        model = torch.compile(model, backend="inductor",mode="reduce-overhead")
+        compiled_model = torch.compile(model, backend="inductor",mode="reduce-overhead")
 
     training_args = Seq2SeqTrainingArguments(
         output_dir="./model",
@@ -46,7 +46,7 @@ if __name__ == "__main__":
         )
     
     trainer = Seq2SeqTrainer(
-        model=model,
+        model=compiled_model,
         args=training_args,
         train_dataset=train_data,
         tokenizer=processor.tokenizer,
@@ -58,8 +58,10 @@ if __name__ == "__main__":
     time_taken = end_time - start_time
     print(f"Training completed in {time_taken} seconds")
 
-    model.save_pretrained("Compile_model_" + type)
-    processor.save_pretrained("Compile_model_" + type)
+
+
+    model.save_pretrained(f"Compile_model_{type}")
+    processor.save_pretrained(f"Compile_model_{type}")
     
 
 
