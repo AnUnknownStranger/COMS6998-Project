@@ -2,7 +2,7 @@ import torch
 from transformers import VisionEncoderDecoderModel, Seq2SeqTrainer, Seq2SeqTrainingArguments, default_data_collator,TrOCRProcessor
 import wandb
 import os
-from preprocess.preprocess import getData
+from preprocess.preprocess import getData,getTest
 import time
 import sys
 
