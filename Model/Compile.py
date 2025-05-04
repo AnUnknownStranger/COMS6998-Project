@@ -33,14 +33,15 @@ if __name__ == "__main__":
     train_data = getData(csv_filename,dir,type_fn,processor)
     print('Load Completed')
     model = VisionEncoderDecoderModel.from_pretrained("microsoft/trocr-base-handwritten")
+    model.config.decoder_start_token_id = processor.tokenizer.pad_token_id
     model.config.pad_token_id = processor.tokenizer.pad_token_id
     model.to("cuda" if torch.cuda.is_available() else "cpu")
     if type == 'default':
-        cmodel = torch.compile(model, backend="inductor")
+        model = torch.compile(model, backend="inductor")
     if type == 'ma':
-        cmodel  = torch.compile(model, backend="inductor",mode="max-autotune")
+        model  = torch.compile(model, backend="inductor",mode="max-autotune")
     if type == 'ro':
-        cmodel = torch.compile(model, backend="inductor",mode="reduce-overhead")
+        model = torch.compile(model, backend="inductor",mode="reduce-overhead")
 
     training_args = Seq2SeqTrainingArguments(
         output_dir="./model",
@@ -58,7 +59,7 @@ if __name__ == "__main__":
         )
     
     trainer = Seq2SeqTrainer(
-        model=cmodel,
+        model=model,
         args=training_args,
         train_dataset=train_data,
         tokenizer=processor.tokenizer,
@@ -70,9 +71,8 @@ if __name__ == "__main__":
     time_taken = end_time - start_time
     print(f"Training completed in {time_taken} seconds")
     
-    uncompiled_model = trainer.model._orig_mod if hasattr(trainer.model, "_orig_mod") else trainer.model
-    uncompiled_model.save_pretrained(f"Compile_model_{type}")
-    processor.save_pretrained(f"Compile_model_{type}") 
+    trainer.model.save_pretrained("Compile_model_{type}")
+    processor.save_pretrained("Compile_model_{type}")  
 
     
 
