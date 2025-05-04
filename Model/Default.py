@@ -18,7 +18,6 @@ if __name__ == "__main__":
     train_data = getData(csv_filename,dir,type_fn,processor)
     print('Load Completed')
     model = VisionEncoderDecoderModel.from_pretrained("microsoft/trocr-base-handwritten")
-    model.config.decoder_start_token_id = processor.tokenizer.pad_token_id
     model.config.pad_token_id = processor.tokenizer.pad_token_id
     model.to("cuda" if torch.cuda.is_available() else "cpu")
     
