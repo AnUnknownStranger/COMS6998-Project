@@ -35,16 +35,16 @@ if __name__ == "__main__":
         type = str(sys.argv[1])
         model_name = type + 'model Evaluation' 
         if type == 'default':
-            processor = TrOCRProcessor.from_pretrained("Compile_model_default")
-            model = VisionEncoderDecoderModel.from_pretrained("Compile_model_default")
+            processor = TrOCRProcessor.from_pretrained("microsoft/trocr-base-handwritten")
+            model = VisionEncoderDecoderModel.from_pretrained("default_model")
             model = torch.compile(model, backend="inductor")
         if type == 'ma':
-            processor = TrOCRProcessor.from_pretrained("Compile_model_ma")
-            model = VisionEncoderDecoderModel.from_pretrained("Compile_model_ma")
+            processor = TrOCRProcessor.from_pretrained("microsoft/trocr-base-handwritten")
+            model = VisionEncoderDecoderModel.from_pretrained("default_model")
             model = torch.compile(model, backend="inductor",mode="max-autotune")
         if type == 'ro':
-            processor = TrOCRProcessor.from_pretrained("Compile_model_ro")
-            model = VisionEncoderDecoderModel.from_pretrained("Compile_model_ro")
+            processor = TrOCRProcessor.from_pretrained("microsoft/trocr-base-handwritten")
+            model = VisionEncoderDecoderModel.from_pretrained("default_model")
             model = torch.compile(model, backend="inductor",mode="reduce-overhead")
         if type == 'initial':
             processor = TrOCRProcessor.from_pretrained("microsoft/trocr-base-handwritten",use_fast=True)
