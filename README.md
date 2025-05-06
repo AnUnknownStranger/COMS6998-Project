@@ -41,3 +41,8 @@ Prediction.py
 Microsoft TrOCR handwritten Ver.     |         NA          |         28m 58s       |         0.45581        |
 Fine-Tuned TrOCR Model               |      1h 44m 48s     |         45m 35s       |         0.58221        |
 Compiled Ver.                        |      1h 36m 36s     |         45m 44s       |         0.57651        |
+
+
+# Wave and Biases Link
+Prediction workspace(https://wandb.ai/wei1070580217-columbia-university/Trocr?nw=nwuserwei1070580217)
+Training workspace(https://wandb.ai/wei1070580217-columbia-university/huggingface?nw=nwuserwei1070580217)
