@@ -1,11 +1,11 @@
 # Fine-Tuning and Optimizing TrOCR Model focusing on handwritten-image recognition task
 
 
-#Description
+# Description
 This project focuses on fine-tuning the TrOCR model(https://huggingface.co/microsoft/trocr-base-handwritten) for handwritten name recognition using Kaggle handwritten name dataset(https://www.kaggle.com/datasets/landlord/handwriting-recognition). Within this project, we'll explore the effect of quantization, pruning, and torch.compile() on the model's training time, accuracy, and prediction time under the same environment. We'll be utilizing virtual machine with a setup of Nividia T4 GPU, 4 cores vCPU, and a 30GB Memory from google cloud platform to perform model fine-tunuing and optimization. 
 
 
-#Repo Outline
+# Repo Outline
 |-Model
   |-preprocess
     |-download.py
@@ -17,7 +17,7 @@ This project focuses on fine-tuning the TrOCR model(https://huggingface.co/micro
   |-Quantization.py
 |-Readme.me
 
-#Commands to execute the code
+# Commands to execute the code
 
 1. Download the data by running ' python download.py ' under Model/preprocess folder
 2. Copy the directory link
@@ -36,7 +36,7 @@ Prediction.py
   - Run ' python Predict.py ma' to perform evaluation on fine tuned compiled model on max-autotune mode
 
 
-#Result
+# Result
 ------------------Model--------------|----Training Time----|----Prediction Time----|----Average Accuracy----|
 Microsoft TrOCR handwritten Ver.     |         NA          |         28m 58s       |         0.45581        |
 Fine-Tuned TrOCR Model               |      1h 44m 48s     |         45m 35s       |         0.58221        |
