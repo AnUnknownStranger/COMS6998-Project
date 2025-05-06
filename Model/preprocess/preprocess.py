@@ -27,7 +27,6 @@ def getData(fn,dir,typefn,processor):
         try:
             with Image.open(filepath) as img:
                 img = img.convert('RGB') 
-                
                 return processor(images=img, return_tensors="pt").pixel_values.squeeze(0)
         except Exception as e:
             print(f"Error loading {filepath}: {e}")
@@ -70,7 +69,6 @@ def getTest(fn,dir,typefn,processor):
         try:
             with Image.open(filepath) as img:
                 img = img.convert('RGB') 
-      
                 return processor(images=img, return_tensors="pt").pixel_values.squeeze(0)
         except Exception as e:
             print(f"Error loading {filepath}: {e}")

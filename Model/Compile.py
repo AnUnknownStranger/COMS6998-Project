@@ -32,17 +32,23 @@ if __name__ == "__main__":
     #Load the data
     train_data = getData(csv_filename,dir,type_fn,processor)
     print('Load Completed')
+
+    #Load the model from hugging face
     model = VisionEncoderDecoderModel.from_pretrained("microsoft/trocr-base-handwritten")
+    #Configure the start token
     model.config.decoder_start_token_id = processor.tokenizer.pad_token_id
     model.config.pad_token_id = processor.tokenizer.pad_token_id
+    #Send the model to CPU
     model.to("cuda" if torch.cuda.is_available() else "cpu")
+
+    #Check the type of compiliation to execute
     if type == 'default':
         model = torch.compile(model, backend="inductor")
     if type == 'ma':
         model  = torch.compile(model, backend="inductor",mode="max-autotune")
     if type == 'ro':
         model = torch.compile(model, backend="inductor",mode="reduce-overhead")
-
+    #Setup the training parameter
     training_args = Seq2SeqTrainingArguments(
         output_dir="./model",
         per_device_train_batch_size=4,
@@ -59,6 +65,7 @@ if __name__ == "__main__":
         save_safetensors=False
         )
     
+    #setup the trainer
     trainer = Seq2SeqTrainer(
         model=model,
         args=training_args,
@@ -66,12 +73,14 @@ if __name__ == "__main__":
         tokenizer=processor.tokenizer,
         data_collator=default_data_collator,
     )
+    #Calculate the training time and execute the training
     start_time = time.time()
     trainer.train()
     end_time = time.time()
     time_taken = end_time - start_time
     print(f"Training completed in {time_taken} seconds")
     
+    #Save the fine-tuned model
     trainer.model.save_pretrained(f"Compile_model_{type}")
     processor.save_pretrained(f"Compile_model_{type}")  
 
