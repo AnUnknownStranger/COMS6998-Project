@@ -49,6 +49,18 @@ if __name__ == "__main__":
         if type == 'initial':
             processor = TrOCRProcessor.from_pretrained("microsoft/trocr-base-handwritten",use_fast=True)
             model = VisionEncoderDecoderModel.from_pretrained("microsoft/trocr-base-handwritten")
+        if type == 'Fdefault':
+            processor = TrOCRProcessor.from_pretrained("microsoft/trocr-base-handwritten")
+            model = VisionEncoderDecoderModel.from_pretrained("default_model")
+            model = torch.compile(model, backend="inductor")
+        if type == 'Fma':
+            processor = TrOCRProcessor.from_pretrained("microsoft/trocr-base-handwritten")
+            model = VisionEncoderDecoderModel.from_pretrained("default_model")
+            model = torch.compile(model, backend="inductor",mode="max-autotune")
+        if type == 'Fro':
+            processor = TrOCRProcessor.from_pretrained("microsoft/trocr-base-handwritten")
+            model = VisionEncoderDecoderModel.from_pretrained("default_model")
+            model = torch.compile(model, backend="inductor",mode="reduce-overhead")
 
         
 
