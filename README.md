@@ -34,13 +34,13 @@ Prediction.py
   - Run ' python Predict.py default ' to perform evaluation on default compiled model
   - Run ' python Predict.py ro' to perform evaluation on fine tuned compiled model on reduce-overhead mode
   - Run ' python Predict.py ma' to perform evaluation on fine tuned compiled model on max-autotune mode
+  - Run ' python Predict.py Fdefault' to perform evaluation on default compiliation wrapper on fine-tuned model
+  - Run ' python Predict.py Fro' to perform evaluation on max-autotune compiliation wrapper on fine-tuned model
+  - Run ' python Predict.py Fma' to perform evaluation on reduce-overhead compiliation wrapper on fine-tuned model
 
 
 # Result
-------------------Model--------------|----Training Time----|----Prediction Time----|----Average Accuracy----|
-Microsoft TrOCR handwritten Ver.     |         NA          |         28m 58s       |         0.45581        |
-Fine-Tuned TrOCR Model               |      1h 44m 48s     |         45m 35s       |         0.58221        |
-Compiled Ver.                        |      1h 36m 36s     |         45m 44s       |         0.57651        |
+![ResultChart]](image.png)
 
 
 # Wave and Biases Link
