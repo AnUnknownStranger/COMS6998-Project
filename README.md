@@ -41,6 +41,9 @@ Prediction.py
   - Run ' python Predict.py Fro' to perform evaluation on max-autotune compilation wrapper on fine-tuned model
   - Run ' python Predict.py Fma' to perform evaluation on the reduce-overhead compilation wrapper on the fine-tuned model
 
+Quantization.py
+  - Run ' python Quantization.py ' to optimize the model with dynamic quantization
+
 
 # Result
 ![image](https://github.com/user-attachments/assets/8ae04361-f66f-442a-8e61-aa724c3f15d7)
