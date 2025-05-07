@@ -45,6 +45,10 @@ Prediction.py
 # Result
 ![image](https://github.com/user-attachments/assets/8ae04361-f66f-442a-8e61-aa724c3f15d7)
 
+![image](https://github.com/user-attachments/assets/37816b3b-cc2b-4df3-9c84-7985f2f2a1ea)
+
+
+
 
 
 # Wave and Biases Link
