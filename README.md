@@ -40,7 +40,8 @@ Prediction.py
 
 
 # Result
-![ResultChart]](image.png)
+![image](https://github.com/user-attachments/assets/8ae04361-f66f-442a-8e61-aa724c3f15d7)
+
 
 
 # Wave and Biases Link
