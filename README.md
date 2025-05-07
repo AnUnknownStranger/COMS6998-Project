@@ -5,9 +5,9 @@
 This project focuses on fine-tuning the TrOCR model(https://huggingface.co/microsoft/trocr-base-handwritten) for handwritten name recognition using the Kaggle handwritten name dataset(https://www.kaggle.com/datasets/landlord/handwriting-recognition). Within this project, we'll explore the effect of quantization, pruning, and torch.compile() on the model's training time, accuracy, and prediction time under the same environment. We'll be utilizing a virtual machine with a setup of 1 Nividia T4 GPU, 4 cores vCPU, and a 30GB Memory from google cloud platform to perform model fine-tuning and optimization. 
 
 
-Repo Root
-│
-├── Model/                 
+Repo Root                                                                                                                                                                                                                                                                                                                                    
+│                                                                                                                                                                                                                                                                                                                                            
+├── Model/                                                                                                                                                                                                                                                                                                                                   
 │   ├── preprocess/     
 │   │   ├── download.py    #to download the dataset                                                                                                                                                                                                                                                                                          
 │   │   └── preprocess.py  #util for preprocessing the images                                                                                                                                                                                                                                                                                
