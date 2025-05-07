@@ -9,14 +9,14 @@ Repo Root
 │
 ├── Model/                 
 │   ├── preprocess/     
-│   │   ├── download.py    #to download the dataset  
-│   │   └── preprocess.py  #util for preprocessing the images
-│   ├── Compile.py         #applying torch.compile technique on the TrOCR model
-│   ├── Default.py         #fine-tune the model without further optimization techniques
-│   ├── Predict.py         #Evlaute the model on the testing set
-│   ├── Pruning.py         #applying pruning technique
-│   └── Quantization.py    #apply quantization technique
-│
+│   │   ├── download.py    #to download the dataset                                                                                                                                                                                                                                                                                          
+│   │   └── preprocess.py  #util for preprocessing the images                                                                                                                                                                                                                                                                                
+│   ├── Compile.py         #applying torch.compile technique on the TrOCR model                                                                                                                                                                                                                                                              
+│   ├── Default.py         #fine-tune the model without further optimization techniques                                                                                                                                                                                                                                                      
+│   ├── Predict.py         #Evlaute the model on the testing set                                                                                                                                                                                                                                                                             
+│   ├── Pruning.py         #applying pruning technique                                                                                                                                                                                                                                                                                       
+│   └── Quantization.py    #apply quantization technique                                                                                                                                                                                                                                                                                     
+│                                                                                                                                                                                                                                                                                                                                            
 └── Readme.me            
 
 
