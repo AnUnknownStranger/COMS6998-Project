@@ -61,6 +61,9 @@ if __name__ == "__main__":
             processor = TrOCRProcessor.from_pretrained("microsoft/trocr-base-handwritten")
             model = VisionEncoderDecoderModel.from_pretrained("default_model")
             model = torch.compile(model, backend="inductor",mode="reduce-overhead")
+        if type == 'pruned':
+            processor = TrOCRProcessor.from_pretrained("microsoft/trocr-base-handwritten")
+            model = VisionEncoderDecoderModel.from_pretrained("pruned_model")
 
         
 

@@ -12,175 +12,152 @@ from transformers import (
     Seq2SeqTrainingArguments,
 )
 from torch.nn.utils.rnn import pad_sequence
+from preprocess.preprocess import getData, getTest
 
-from preprocess.preprocess import getData
 
 # -----------------------------------------------------------------------------
-# Utils
+# Layerwise Pruning Utility
 # -----------------------------------------------------------------------------
-
-def _freeze_zero_weights(module: torch.nn.Module):
-    """Freeze parameters that became zero after pruning so gradients stay 0."""
-    with torch.no_grad():
-        mask = module.weight == 0
-        module.weight[mask] = 0
-    module.weight.register_hook(lambda grad: grad * (~mask))
-
-
 def apply_layerwise_pruning(
     model: VisionEncoderDecoderModel,
     *,
-    target: Literal["decoder", "encoder", "all"] = "decoder",
+    target: Literal['decoder', 'encoder', 'all'] = 'decoder',
     default_amount: float = 0.2,
-    freeze_pruned: bool = True,
-):
-    """Apply Layer‑wise L1‑unstructured pruning and (optionally) freeze pruned params."""
-    if target not in {"decoder", "encoder", "all"}:
+) -> VisionEncoderDecoderModel:
+    """
+    Apply L1 unstructured pruning per Linear layer and remove pruning reparam immediately.
+    """
+    submodules = {'decoder': model.decoder, 'encoder': model.encoder, 'all': model}
+    if target not in submodules:
         raise ValueError("target must be 'decoder', 'encoder', or 'all'")
+    submod = submodules[target]
 
-    submodule = {
-        "decoder": model.decoder,
-        "encoder": model.encoder,
-        "all": model,
-    }[target]
-
-    print(f"[Pruning] {target} | base ratio={default_amount}")
-
-    total_params, total_zeros = 0, 0
-    for name, module in submodule.named_modules():
+    total_params = 0
+    total_zeros = 0
+    for name, module in submod.named_modules():
         if isinstance(module, torch.nn.Linear):
-            # custom ratios
-            if "self_attn" in name:
-                amount = 0.10
-            elif "fc2" in name:
-                amount = 0.30
-            else:
-                amount = default_amount
+            if 'lm_head' in name:
+                continue
+            amount = default_amount
+            if 'self_attn' in name:
+                amount = 0.1
+            elif 'fc2' in name:
+                amount = 0.3
 
-            prune.l1_unstructured(module, name="weight", amount=amount)
-            # keep mask during training
-            if freeze_pruned:
-                _freeze_zero_weights(module)
+            prune.l1_unstructured(module, name='weight', amount=amount)
+            prune.remove(module, 'weight')
 
-            param = module.weight
-            total_params += param.numel()
-            zeros = torch.sum(param == 0).item()
+            num = module.weight.numel()
+            zeros = int((module.weight == 0).sum().item())
+            total_params += num
             total_zeros += zeros
-            print(f"  · {name:50s}  sparsity={zeros/param.numel():.2%}")
+            print(f"Pruned {name}: sparsity={zeros/num:.2%}")
 
-    print(f"[Pruning] Overall sparsity: {total_zeros/total_params:.2%}\n")
+    overall = (total_zeros / total_params) if total_params > 0 else 0
+    print(f"Overall sparsity ({target}): {overall:.2%} ({total_zeros}/{total_params})")
     return model
 
 
 # -----------------------------------------------------------------------------
-# Custom collator for vision‑to‑text
+# Data Collator for Vision-to-Text
 # -----------------------------------------------------------------------------
-
 def build_collator(processor: TrOCRProcessor):
-    """Return a collate_fn that pads pixel_values & labels appropriately."""
-
-    def collate(batch: List[Dict[str, Any]]) -> Dict[str, torch.Tensor]:
-        pixel_values = torch.stack([item["pixel_values"] for item in batch])  # images already 3×384×384
-
-        # labels: list[List[int]] ➜ pad to max_len with pad_token_id, then replace pad with -100
-        label_seqs = [torch.tensor(item["labels"], dtype=torch.long) for item in batch]
-        labels = pad_sequence(
-            label_seqs,
+    def collate_fn(batch: List[Dict[str, Any]]) -> Dict[str, torch.Tensor]:
+        pixel_values = torch.stack([item['pixel_values'] for item in batch])
+        labels = [item['labels'].clone().detach() for item in batch]
+        labels_padded = pad_sequence(
+            labels,
             batch_first=True,
             padding_value=processor.tokenizer.pad_token_id,
         )
-        labels[labels == processor.tokenizer.pad_token_id] = -100
-
-        return {"pixel_values": pixel_values, "labels": labels}
-
-    return collate
+        labels_padded[labels_padded == processor.tokenizer.pad_token_id] = -100
+        return {'pixel_values': pixel_values, 'labels': labels_padded}
+    return collate_fn
 
 
 # -----------------------------------------------------------------------------
-# Main pipeline
+# Fine-tuning Pipeline
 # -----------------------------------------------------------------------------
-
 def fine_tune_model(
     *,
-    model_dir: str = "pruned_model",
-    data_dir: str = "/home/hz2994/.cache/kagglehub/datasets/landlord/handwriting-recognition/versions/1",
+    model_dir: str = 'pruned_model',
+    data_dir: str = '/home/hz2994/.cache/kagglehub/datasets/landlord/handwriting-recognition/versions/1',
     epochs: int = 10,
     batch_size: int = 4,
-):
-    """Load (or create) pruned model, then fine‑tune."""
-    csv_filename = "written_name_train_v2.csv"
-    type_fn = "train_v2/train"
+) -> None:
+    processor = TrOCRProcessor.from_pretrained('microsoft/trocr-base-handwritten', use_fast=True)
 
-    print("[Init] Loading processor …")
-    processor = TrOCRProcessor.from_pretrained("microsoft/trocr-base-handwritten", use_fast=True)
+    print('[Init] No existing model, downloading and pruning...')
+    model = VisionEncoderDecoderModel.from_pretrained('microsoft/trocr-base-handwritten')
+    model = apply_layerwise_pruning(model, target='decoder', default_amount=0.2)
+    os.makedirs(model_dir, exist_ok=True)
+    model.save_pretrained(model_dir)
+    processor.save_pretrained(model_dir)
+    print(f'[Init] Pruned model saved to {model_dir}')
+    # Check if pruned model can generate predictions
+    model.eval()
+    dummy_input = torch.randn(1, 3, 384, 384).to(model.device)  # 1 dummy image
+    with torch.no_grad():
+        try:
+            output = model.generate(dummy_input)
+            print("✅ Generate successful:", output)
+        except Exception as e:
+            print("❌ Generate failed after pruning:", e)
+            exit(1)
 
-    if os.path.exists(model_dir):
-        print(f"[Init] Using existing model from '{model_dir}' …")
-        model = VisionEncoderDecoderModel.from_pretrained(model_dir)
-    else:
-        print("[Init] Creating pruned model …")
-        model = VisionEncoderDecoderModel.from_pretrained("microsoft/trocr-base-handwritten")
-        model = apply_layerwise_pruning(model, target="decoder", default_amount=0.2)
-        os.makedirs(model_dir, exist_ok=True)
-        model.save_pretrained(model_dir)
-        processor.save_pretrained(model_dir)
-        print("[Init] Pruned model saved.")
 
     model.config.decoder_start_token_id = processor.tokenizer.pad_token_id
     model.config.pad_token_id = processor.tokenizer.pad_token_id
 
-    device = "cuda" if torch.cuda.is_available() else "cpu"
+    device = 'cuda' if torch.cuda.is_available() else 'cpu'
     model.to(device)
 
-    # Data --------------------------------------------------------------------
-    print("[Data] Loading dataset …")
-    train_data = getData(csv_filename, data_dir, type_fn, processor)
-    print(f"[Data] Samples: {len(train_data)}")
+    train_data = getData('written_name_train_v2.csv', data_dir, 'train_v2/train', processor)
+    print(f'[Data] Loaded {len(train_data)} samples')
+    collate_fn = build_collator(processor)
 
-    data_collator = build_collator(processor)
-
-    # Trainer -----------------------------------------------------------------
     training_args = Seq2SeqTrainingArguments(
         output_dir=model_dir,
         per_device_train_batch_size=batch_size,
         num_train_epochs=epochs,
-        save_strategy="epoch",
-        save_total_limit=1,
-        logging_dir=os.path.join(model_dir, "logs"),
-        remove_unused_columns=False,
-        fp16=torch.cuda.is_available(),
         learning_rate=1e-5,
-        report_to=["wandb"],
+        weight_decay=0.01,
+        warmup_steps=500,
+        save_strategy='epoch',
+        save_total_limit=1,
+        logging_dir=os.path.join(model_dir, 'logs'),
+        remove_unused_columns=False,
+        fp16=False,
+        max_grad_norm=1.0,
+        report_to=['wandb'],
         logging_steps=50,
-        run_name="pruned_model",
+        run_name='pruned_model',
     )
 
     trainer = Seq2SeqTrainer(
         model=model,
         args=training_args,
         train_dataset=train_data,
-        tokenizer=processor.tokenizer,  # still needed for decoding & metrics
-        data_collator=data_collator,
+        tokenizer=processor.tokenizer,
+        data_collator=collate_fn,
     )
 
-    # Train -------------------------------------------------------------------
     start = time.time()
     trainer.train()
-    print(f"[Train] Done in {time.time() - start:.2f}s")
+    print(f'[Train] Completed in {time.time() - start:.2f}s')
 
     trainer.save_model(model_dir)
     processor.save_pretrained(model_dir)
-    print("[Train] Model saved to", model_dir)
+    print(f'[Train] Model and processor saved to {model_dir}')
 
 
 # -----------------------------------------------------------------------------
-# Levenshtein helper (optional evaluation)
+# Optional: similarity metric
 # -----------------------------------------------------------------------------
-
 def calculate_similarity(pred: str, gold: str) -> float:
     lev = distance(pred, gold)
     return 1 - lev / max(len(pred), len(gold)) if max(len(pred), len(gold)) else 1.0
 
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     fine_tune_model()
