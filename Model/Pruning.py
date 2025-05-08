@@ -117,22 +117,20 @@ def fine_tune_model(
     collate_fn = build_collator(processor)
 
     training_args = Seq2SeqTrainingArguments(
-        output_dir=model_dir,
-        per_device_train_batch_size=batch_size,
-        num_train_epochs=epochs,
-        learning_rate=1e-5,
-        weight_decay=0.01,
-        warmup_steps=500,
-        save_strategy='epoch',
-        save_total_limit=1,
-        logging_dir=os.path.join(model_dir, 'logs'),
+        output_dir="./model",
+        per_device_train_batch_size=4,
+        eval_steps=500,
+        num_train_epochs=10,
+        save_steps=500,
+        save_total_limit=2,
+        logging_dir="./logs",
         remove_unused_columns=False,
-        fp16=False,
-        max_grad_norm=1.0,
-        report_to=['wandb'],
+        fp16=torch.cuda.is_available(),
+        learning_rate=1e-5,
+        report_to="wandb",
         logging_steps=50,
-        run_name='pruned_model',
-    )
+        save_safetensors=False
+        )
 
     trainer = Seq2SeqTrainer(
         model=model,
