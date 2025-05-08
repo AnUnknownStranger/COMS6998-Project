@@ -50,9 +50,11 @@ Pruning.py
 
 
 # Result
-![image](https://github.com/user-attachments/assets/8ae04361-f66f-442a-8e61-aa724c3f15d7)
+![image](https://github.com/user-attachments/assets/3dbbfc53-7e8b-4494-8fff-e06ec9b90a83)
 
-![image](https://github.com/user-attachments/assets/205a411a-eb34-4dfb-9091-caabf46276ac)
+
+![image](https://github.com/user-attachments/assets/020b8e5c-1577-429b-8341-0f77f745c2ca)
+
 
 
 
