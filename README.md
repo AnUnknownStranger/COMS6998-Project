@@ -53,7 +53,8 @@ Pruning.py
 ![image](https://github.com/user-attachments/assets/3dbbfc53-7e8b-4494-8fff-e06ec9b90a83)
 
 
-![image](https://github.com/user-attachments/assets/020b8e5c-1577-429b-8341-0f77f745c2ca)
+![image](https://github.com/user-attachments/assets/c6113f92-ca6a-4063-9408-091b18e48d5e)
+
 
 
 
