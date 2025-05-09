@@ -1,0 +1,9 @@
+pandas
+numpy
+Pillow
+torch
+transformers
+tqdm
+python-Levenshtein
+wandb
+kagglehub
