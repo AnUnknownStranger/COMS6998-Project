@@ -1,8 +1,69 @@
-# Fine-Tuning and Optimizing TrOCR Model focusing on handwritten-image recognition task
+# HPML Project: [Fine-Tuning and Optimizing TrOCR Model focusing on handwritten-image recognition task]
+- **Team Name**: [HPML]
+- **Members**:
+  - Wei Chen (wc2917)
+  - Tao Tong (tt3310)
+  - Haotian Zhang (hz2294)
 
+---
 
-# Description
+## 1. Problem Statement
+In modern era, even through the rapid development of technology, handwriting still remains a common method of communication especially in education. Handwritten identity/name recognition remains a part of the crucial aspect of academic record management. However, the manual transcription of written words is time consuming. Therefore, developing an efficient machine learning model can significantly improve the general process.
+
 This project focuses on fine-tuning the TrOCR model(https://huggingface.co/microsoft/trocr-base-handwritten) for handwritten name recognition using the Kaggle handwritten name dataset(https://www.kaggle.com/datasets/landlord/handwriting-recognition). Within this project, we'll explore the effect of quantization, pruning, and torch.compile() on the model's training time, accuracy, and prediction time under the same environment. We'll be utilizing a virtual machine with a setup of 1 Nividia T4 GPU, 4 cores vCPU, and a 30GB Memory from google cloud platform to perform model fine-tuning and optimization. 
+
+---
+
+## 2. Model Description
+Microsoft TrOCR Model
+- Framework: Pytorch
+---
+
+## 3. Final Results Summary
+
+Microsoft TrOCR Model
+| Metric                                         | Value                                    |
+|------------------------------------------------|------------------------------------------|
+| Average Similarity Score(Levenshtein Distance) | 45.581%                                  |
+| Testing   Time                                 | 29m 58s                                  |
+| Training Time/Epoch                            | N/A                                      |
+| Device                                         | GCP, Nividia T4, 4 core CPU, 30GB Memory |
+
+Fine-Tuned TrOCR Model
+| Metric                                         | Value                                    |
+|------------------------------------------------|------------------------------------------|
+| Average Similarity Score(Levenshtein Distance) | 58.221%                                  |
+| Testing   Time                                 | 45m 35s                                  |
+| Training Time/Epoch                            | 1h 44m 48s                               |
+| Device                                         | GCP, Nividia T4, 4 core CPU, 30GB Memory |
+
+Torch.compile() default parameter TrOCR Model
+| Metric                                         | Value                                    |
+|------------------------------------------------|------------------------------------------|
+| Average Similarity Score(Levenshtein Distance) | 57.651%                                  |
+| Testing   Time                                 | 45m 44s                                  |
+| Training Time/Epoch                            | 1h 36m 36s                               |
+| Device                                         | GCP, Nividia T4, 4 core CPU, 30GB Memory |
+
+Pruned TrOCR Model
+| Metric                                         | Value                                    |
+|------------------------------------------------|------------------------------------------|
+| Average Similarity Score(Levenshtein Distance) | 46.681%                                  |
+| Testing   Time                                 | 30m 05s                                  |
+| Training Time/Epoch                            | 1h 44m 1s                                |
+| Device                                         | GCP, Nividia T4, 4 core CPU, 30GB Memory |
+
+Quantization Version of TrOCR Model
+| Metric                                         | Value                                    |
+|------------------------------------------------|------------------------------------------|
+| Average Similarity Score(Levenshtein Distance) | 54.621%                                  |
+| Testing   Time(on CPU)                         | 5h 17m 52s                               |
+| Training Time/Epoch                            | N/A                                      |
+| Device                                         | GCP, Nividia T4, 4 core CPU, 30GB Memory |
+
+---
+
+
 
 
 Repo Root                                                                                                                                                                                                                                                                                                                                    
