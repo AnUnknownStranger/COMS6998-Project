@@ -62,10 +62,116 @@ Quantization Version of TrOCR Model
 | Device                                         | GCP, Nividia T4, 4 core CPU, 30GB Memory |
 
 ---
+### A. Requirements
+
+Install dependencies:
+```bash
+pip install -r requirements.txt
+```
+
+B. Wandb Dashboard
+
+View training and evaluation metrics here: Wandb Dashboard Link
+Prediction workspace(https://wandb.ai/wei1070580217-columbia-university/Trocr?nw=nwuserwei1070580217)
+Training workspace(https://wandb.ai/wei1070580217-columbia-university/huggingface?nw=nwuserwei1070580217)
+
+---
+### C. Specify for Training
+
+To train the model from scratch:
+1. Download the data by running
+   ```bash
+   python download.py
+   ```
+   under Model/preprocess folder
+2. Copy the directory link after the code finish running
+3. Manually modify 'dir' 'csv_filename' and 'type_fn' variables under each Python file within Model folder
+4. Run
+   ```bash
+    python Default.py
+   ```
+   fine-tune the model on the datasets
+Compile.py
+  - Run
+    ```bash
+    python Compile.py default
+    ```
+    to fine-tune on the default compiled model
+    
+  - Run
+    ```bash
+    python Compile.py ro
+    ```
+    to fine-tune on the reduce-overhead mode
+  - Run
+    ```bash
+    python Compile.py ma
+    ```
+    to fine-tune on the max-autotune mode
+Quantization.py
+  - Run 
+    ```bash
+    python Quantization.py
+    ```
+    to optimize the model with dynamic quantization
+Pruning.py
+  - Run
+    ```bash
+    python Pruning.py
+    ```
+    to run training on pruned model
 
 
+---
 
 
+### D. Evaluation
+
+To evaluate the trained model:
+
+Prediction.py
+  - Run
+    ```bash
+    python Predict.py
+    ```
+    to perform evaluation on the default fine-tuned model
+  - Run
+    ```bash
+    python Predict.py default
+    ```
+    to perform evaluation on the default compiled model
+  - Run
+    ```bash
+    python Predict.py ro
+    ```
+    to perform evaluation on fine tuned compiled model in reduce-overhead mode
+  - Run
+    ```bash
+    python Predict.py ma
+    ```
+    to perform evaluation on fine tuned compiled model in max-autotune mode
+  - Run
+    ```bash
+    python Predict.py Fdefault
+    ```
+    to perform evaluation on the default compilation wrapper on the fine-tuned model
+  - Run
+    ```bash
+    python Predict.py Fro
+    ```
+    to perform evaluation on max-autotune compilation wrapper on fine-tuned model
+  - Run
+    ```bash
+    python Predict.py Fma
+    ```
+    to perform evaluation on the reduce-overhead compilation wrapper on the fine-tuned model
+  - Run
+    ```bash
+    python Predict.py pruned
+    ```
+    to perform evaluation on the pruned model
+
+---
 Repo Root                                                                                                                                                                                                                                                                                                                                    
 │                                                                                                                                                                                                                                                                                                                                            
 ├── Model/                                                                                                                                                                                                                                                                                                                                   
@@ -81,48 +187,4 @@ Repo Root
 └── Readme.me            
 
 
-# Commands to execute the code
 
-1. Download the data by running ' python download.py ' under Model/preprocess folder
-2. Copy the directory link
-3. Manually modify 'dir' 'csv_filename' and 'type_fn' variables under each python within within Model folder
-4. Run ' python Default.py ' fine-tune the model on the datasets
-
-Compile.py
-  - Run ' python Compile.py default ' to fine-tune on the default compiled model
-  - Run ' python Compile.py ro' to fine-tune on the reduce-overhead mode
-  - Run ' python Compile.py ma' to fine-tune on the max-autotune mode
-
-Prediction.py
-  - Run ' python Predict.py ' to perform evaluation on the default fine-tuned model
-  - Run ' python Predict.py default ' to perform evaluation on the default compiled model
-  - Run ' python Predict.py ro' to perform evaluation on fine tuned compiled model in reduce-overhead mode
-  - Run ' python Predict.py ma' to perform evaluation on fine tuned compiled model in max-autotune mode
-  - Run ' python Predict.py Fdefault' to perform evaluation on the default compilation wrapper on the fine-tuned model
-  - Run ' python Predict.py Fro' to perform evaluation on max-autotune compilation wrapper on fine-tuned model
-  - Run ' python Predict.py Fma' to perform evaluation on the reduce-overhead compilation wrapper on the fine-tuned model
-  - Run ' python Predict.py pruned' to perform evaluation on the pruned model
-
-Quantization.py
-  - Run ' python Quantization.py ' to optimize the model with dynamic quantization
-
-Pruning.py
-  - Run ' python Pruning.py ' to run training on pruned model
-
-
-# Result
-![image](https://github.com/user-attachments/assets/3dbbfc53-7e8b-4494-8fff-e06ec9b90a83)
-
-
-![image](https://github.com/user-attachments/assets/c6113f92-ca6a-4063-9408-091b18e48d5e)
-
-
-
-
-
-
-
-
-# Wave and Biases Link
-Prediction workspace(https://wandb.ai/wei1070580217-columbia-university/Trocr?nw=nwuserwei1070580217)
-Training workspace(https://wandb.ai/wei1070580217-columbia-university/huggingface?nw=nwuserwei1070580217)
