@@ -15,7 +15,7 @@ This project focuses on fine-tuning the TrOCR model(https://huggingface.co/micro
 ---
 
 ## 2. Model Description
-Microsoft TrOCR Model
+Microsoft TrOCR Model(https://huggingface.co/microsoft/trocr-base-handwritten) 
 - Framework: Pytorch
 ---
 
